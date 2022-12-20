@@ -1,33 +1,33 @@
-#include <LiquidCrystal.h> // includes the LiquidCrystal Library 
-LiquidCrystal lcd(1, 2, 4, 5, 6, 7); // Creates an LC object. Parameters: (rs, enable, d4, d5, d6, d7)
+#include <LiquidCrystal.h> // inkluderar LiquidCrystal biblioteket 
+LiquidCrystal lcd(1, 2, 4, 5, 6, 7); // Skapar en LC objekt. Parameters: (rs, enable, d4, d5, d6, d7)
 
 
 int buzzer = 8 ;
 
-int buttonState = 0;     // current state of the button
-bool lastbuttonState = false; // previous state of the button
-int startPressed = 0;    // the moment the button was pressed
-int endPressed = 0;      // the moment the button was released
-int holdTime = 0;        // how long the button was hold
-int idleTime = 0;        // how long the button was idle
+int buttonState = 0;     // kanppens nuvarande värde
+bool lastbuttonState = false; // knappens föregående värde
+int startPressed = 0;    // när knappen hålls in (trycks ner) 
+int endPressed = 0;      // när knappen släppts 
+int holdTime = 0;        // hur länge knappen var tryckt
+int idleTime = 0;        // hur länge kanppen var inaktiv
 int lastMillis = 0;
 String buff = "";
 
 
 void setup ()
 {
-  lcd.begin(16, 2); // Initializes the interface to the LCD screen, and specifies the dimensions (width and height) of the display
+  lcd.begin(16, 2); // Initierar gränssnittet till LCD-skärmen och specificerar dimensionerna (bredd och höjd) på skärmen
   Serial.begin(9600);
   pinMode (buzzer, INPUT) ;
 }
 void loop() {
-  buttonState = digitalRead(buzzer); // read the button input
+  buttonState = digitalRead(buzzer); // läser knappens input
 
 
 
   if (buttonState == LOW) {
     //if buffer full
-    if ((millis() - endPressed) % 65536 > 500) { //letter
+    if ((millis() - endPressed) % 65536 > 500) { //en bokstav
       if (buff != "") {
         Serial.println(retBuf());
         clearBuf();
@@ -35,7 +35,7 @@ void loop() {
       }
 
     }
-    if ((millis() - endPressed) % 65536 > 1500) { //word
+    if ((millis() - endPressed) % 65536 > 1500) { //ett ord
       if (lastbuttonState == true) {
         Serial.println("SPACE HERE");
         lastbuttonState = false;
@@ -45,7 +45,7 @@ void loop() {
 
   }
 
-  else if (buttonState == HIGH ) { // button state changed
+  else if (buttonState == HIGH ) { // kanppens tillstånd ändrats
     startPressed = millis();
 
     updateState();
@@ -58,7 +58,7 @@ void loop() {
 
 
 void updateState() {
-  // the button has been just pressed
+  // kanppen har precis tryckts ned
 
 
   while (digitalRead(buzzer) == HIGH) {
@@ -66,7 +66,7 @@ void updateState() {
   }
 
 
-  // the button has been just released
+  // knappen har precis släppts
 
   holdTime = endPressed - startPressed;
   Serial.println(holdTime);
@@ -99,6 +99,8 @@ String morseToChar(const String& morse) {
                              "..-", "...-", ".--", "-..-",
                              "-.--", "--.."
                             };
+// Morsekod för olika bokstäver
+
 
   for (int k = 0; k < sizeof(letters); k++) {
 
@@ -114,3 +116,5 @@ String morseToChar(const String& morse) {
 void clearBuf() {
   buff = "";
 }
+
+// clear:ar
